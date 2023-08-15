@@ -4,13 +4,48 @@
 #include <iostream>
 #include <span>
 #include <string>
+#include <sstream>
 
 using namespace std;
+using std::stringstream;
 
 void get_URL( const string& host, const string& path )
 {
-  cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
-  cerr << "Warning: get_URL() has not been implemented yet.\n";
+  // cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
+  // cerr << "Warning: get_URL() has not been implemented yet.\n";
+
+  stringstream fmt;  
+  
+  fmt << "GET " << path << " HTTP/1.1\r\n"
+      << "Host: " << host << "\r\n"
+      << "Connection: close\r\n"
+      << "\r\n"
+      << "\r\n";
+
+  // 需要发送的http请求
+  std::string http_request = fmt.str();
+
+  const Address address(host, "http");
+  TCPSocket tcpsocket;
+
+  // 连接服务器并发送http请求
+  tcpsocket.connect(address);
+  tcpsocket.write(http_request);
+
+  string http_resp;
+  string buf;
+
+  // 只要还未读到eof并且tcp连接未关闭，就一直读取
+  while (!tcpsocket.eof() && !tcpsocket.closed()) {
+    tcpsocket.read(buf);
+    http_resp += buf;
+  }
+
+  if (tcpsocket.closed()) {
+    tcpsocket.close();
+  }
+
+  cout << http_resp;
 }
 
 int main( int argc, char* argv[] )
