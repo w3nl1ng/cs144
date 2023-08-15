@@ -8,12 +8,25 @@
 class Reader;
 class Writer;
 
+namespace mytype {
+  typedef uint8_t byte;
+}
+
 class ByteStream
 {
 protected:
   uint64_t capacity_;
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
+  // 定义一个队列用来缓存字节流
+  std::queue<mytype::byte> buf;
+  // 统计一共push了多少byte
+  uint64_t num_of_byte_pushed;
+  // 标记stream是否关闭
+  bool is_close;
+  // 标记是否发生错误
+  bool is_error;
 
+  uint64_t num_of_byte_poped;
 public:
   explicit ByteStream( uint64_t capacity );
 
