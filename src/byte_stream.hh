@@ -17,8 +17,8 @@ class ByteStream
 protected:
   uint64_t capacity_;
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
-  // 定义一个队列用来缓存字节流
-  std::queue<mytype::byte> buf;
+  // 使用string作为载体
+  std::string buf;
   // 统计一共push了多少byte
   uint64_t num_of_byte_pushed;
   // 标记stream是否关闭

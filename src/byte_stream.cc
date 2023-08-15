@@ -5,7 +5,7 @@
 using namespace std;
 
 ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ), 
-buf(std::queue<mytype::byte>()), num_of_byte_pushed(0), is_close(false), is_error(false),
+buf(std::string()), num_of_byte_pushed(0), is_close(false), is_error(false),
 num_of_byte_poped(0)  
 {}
 
@@ -13,14 +13,13 @@ void Writer::push( string data )
 {
   // Your code here.
 
-  if (data == "") {
-    return;
-  }
-
-  unsigned int i = 0;
-  while (buf.size() < capacity_ && i < data.length()) {
-    buf.push(data[i++]);
-    num_of_byte_pushed++;
+  if (buf.size() + data.size() <= capacity_) {
+    buf.append(data);
+    num_of_byte_pushed += data.size();
+  } else {
+    int left = available_capacity();
+    buf.append(data.substr(0, left));
+    num_of_byte_pushed += left;
   }
 }
 
@@ -59,19 +58,7 @@ uint64_t Writer::bytes_pushed() const
 
 string_view Reader::peek() const
 {
-  static std::string ret;
-
-  if (ret != "") {
-    ret = "";
-  }
-
-  std::queue<mytype::byte> temp(buf);
-  while (!temp.empty()) {
-    // ret.append(1, static_cast<char>(temp.front()));
-    ret += static_cast<char>(temp.front());
-    temp.pop();
-  }
-  return std::string_view(ret);
+  return std::string_view(buf);
 }
 
 bool Reader::is_finished() const
@@ -89,17 +76,13 @@ bool Reader::has_error() const
 void Reader::pop( uint64_t len )
 {
   // Your code here.
-
+  int old = buf.size();
   if (len >= buf.size()) {
-    buf = std::queue<mytype::byte>();
+    buf.clear();
+    num_of_byte_poped += old;
+  } else {
+    buf = buf.substr(len, old-len);
     num_of_byte_poped += len;
-    return;
-  }
-
-  while (len > 0 && buf.size() > 0) {
-    buf.pop();
-    len--;
-    num_of_byte_poped++;
   }
 }
 
