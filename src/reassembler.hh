@@ -3,6 +3,9 @@
 #include "byte_stream.hh"
 
 #include <string>
+#include <vector>
+
+using std::vector;
 
 class Reassembler
 {
@@ -27,8 +30,27 @@ public:
    *
    * The Reassembler should close the stream after writing the last byte.
    */
+
+  
+
   void insert( uint64_t first_index, std::string data, bool is_last_substring, Writer& output );
 
   // How many bytes are stored in the Reassembler itself?
   uint64_t bytes_pending() const;
+
+  Reassembler();
+
+protected:
+  vector<char> _buf;
+  uint64_t _capacity;
+  uint64_t _first_expected;
+  uint64_t _last_expected;
+  uint64_t _bytes_pending;
+  
+
+  bool has_inited;
+  int64_t last_byte;
+
+  uint64_t get_string(std::string& str, uint64_t ac);
+
 };

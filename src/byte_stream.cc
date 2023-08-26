@@ -65,6 +65,7 @@ bool Reader::is_finished() const
 {
   // Your code here.
   return is_close && num_of_byte_poped == num_of_byte_pushed;
+  // return is_close;
 }
 
 bool Reader::has_error() const

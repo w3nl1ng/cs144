@@ -6,6 +6,7 @@
 #include <concepts>
 #include <optional>
 #include <utility>
+#include <iostream>
 
 static_assert( sizeof( Reader ) == sizeof( ByteStream ),
                "Please add member variables to the ByteStream base, not the ByteStream Reader." );
@@ -183,6 +184,8 @@ struct ReadAll : public Expectation<ByteStream>
     std::string got;
     read( bs.reader(), output_.size(), got );
     if ( got != output_ ) {
+      std::cout << output_.size() << std::endl;
+      std::cout << got.size() << std::endl;
       throw ExpectationViolation { "Expected to read \"" + Printer::prettify( output_ ) + "\", but found \""
                                    + Printer::prettify( got ) + "\"" };
     }
