@@ -31,4 +31,12 @@ public:
 
   // How many bytes are stored in the Reassembler itself?
   uint64_t bytes_pending() const;
+
+  Reassembler();
+
+private:
+  uint64_t _first_unassembled_index;
+  bool _is_last_index_set;
+  uint64_t _last_index;
+  uint64_t _bytes_pending;
 };
