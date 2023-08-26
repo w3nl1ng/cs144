@@ -13,7 +13,7 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     _last_index = first_index + data.length();
   }
 
-  if (first_index <= _first_unassembled_index && data.length() > 0) {
+  if (first_index <= _first_unassembled_index) {
     // do push
     string push_data = data.substr(_first_unassembled_index-first_index);
     output.push(push_data);
