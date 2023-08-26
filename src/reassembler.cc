@@ -11,13 +11,24 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
   if (is_last_substring) {
     _is_last_index_set = true;
     _last_index = first_index + data.length();
+    if (data == "") {
+      output.close();
+    }
   }
 
-  if (first_index <= _first_unassembled_index) {
+  if (first_index <= _first_unassembled_index && first_index+data.length()>_first_unassembled_index) {
     // do push
-    string push_data = data.substr(_first_unassembled_index-first_index, available_capacity);
+    string push_data = data.substr(_first_unassembled_index-first_index);
+    auto next = _unassembled_str.lower_bound(first_index+push_data.length());
+    if (next != _unassembled_str.end()) {
+      if (next->first <= first_index+push_data.length()) {
+        // need merge
+        _bytes_pending -= next->second.substr(first_index+push_data.length()-next->first).length();
+        push_data += next->second.substr(first_index+push_data.length()-next->first);
+      }
+    }
     output.push(push_data);
-    _first_unassembled_index += push_data.length();
+    _first_unassembled_index += push_data.substr(0, available_capacity).length();
 
     // if the last index contain in push_data, mean finished
     if (_is_last_index_set && _last_index <= _first_unassembled_index+push_data.length()) {
