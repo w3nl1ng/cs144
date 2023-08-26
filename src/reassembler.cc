@@ -23,6 +23,15 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     if (_is_last_index_set && _last_index <= _first_unassembled_index+push_data.length()) {
       output.close();
     }
+  } else {
+    // do not push
+    if (first_index < _first_unassembled_index+available_capacity) {
+      // do cache
+      string buffered_str = data.substr(0, available_capacity); //do not cache the str out of capacity
+      cache_str(first_index, buffered_str);
+    } else {
+      // do not cache
+    }
   }
 }
 
@@ -32,9 +41,16 @@ uint64_t Reassembler::bytes_pending() const
   return _bytes_pending;
 }
 
+void Reassembler::cache_str(uint64_t first_index, string data) {
+  _unassembled_str[first_index] = data;
+  _bytes_pending += data.length();
+}
+
+
 Reassembler::Reassembler() :
   _first_unassembled_index(0),
   _is_last_index_set(false),
   _last_index(0),
-  _bytes_pending(0)
+  _bytes_pending(0),
+  _unassembled_str()
   {}

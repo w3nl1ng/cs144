@@ -3,6 +3,10 @@
 #include "byte_stream.hh"
 
 #include <string>
+#include <map>
+
+using std::map;
+using std::string;
 
 class Reassembler
 {
@@ -39,4 +43,9 @@ private:
   bool _is_last_index_set;
   uint64_t _last_index;
   uint64_t _bytes_pending;
+
+  map<uint64_t, string> _unassembled_str;
+
+  void cache_str(uint64_t first_index, string data);
 };
+
